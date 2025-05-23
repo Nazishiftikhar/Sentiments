@@ -12,9 +12,14 @@ def download_model():
     if not os.path.exists(filename):
         with st.spinner("Downloading model..."):
             response = requests.get(url)
+            # Check content-type to make sure it's a binary file
+            if "html" in response.headers.get("Content-Type", ""):
+                st.error("Failed to download model: got HTML instead of a binary file.")
+                st.stop()
             with open(filename, "wb") as f:
                 f.write(response.content)
     return filename
+
 
 # Download and load model
 model_path = download_model()
